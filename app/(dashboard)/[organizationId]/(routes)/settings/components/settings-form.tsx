@@ -88,7 +88,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
       loading={loading}
     />
      <div className="flex items-center justify-between">
-        <Heading title="Opciones de la Tienda" description="Administra las preferencias" />
+        <Heading title="Opciones de la Organización" description="Administra las preferencias" />
         <Button
           disabled={loading}
           variant="destructive"
@@ -109,7 +109,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
                 <FormItem>
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Organization name" {...field} />
+                    <Input disabled={loading} placeholder="Nombre de la Organizarión" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
