@@ -98,6 +98,9 @@ export async function GET(
     const modalityId = searchParams.get('modalityId') || undefined;
     const technologyId = searchParams.get('technologyId') || undefined;
     const categoryId = searchParams.get('categoryId') || undefined;
+    const locationId = searchParams.get('locationId') || undefined;
+    const availabilityId = searchParams.get('availabilityId') || undefined;
+    const companyId = searchParams.get('companyId') || undefined;
     const isFeatured = searchParams.get('isFeatured');
 
     if (!params.organizationId) {
@@ -109,6 +112,9 @@ export async function GET(
         organizationId: params.organizationId,
         modalityId,
         technologyId,
+        availabilityId,
+        companyId,
+        locationId,
         categoryId,
         isFeatured: isFeatured ? true : undefined,
       },
