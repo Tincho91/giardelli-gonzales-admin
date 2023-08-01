@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Organization {
+  id              String          @id @default(uuid())
+  name            String
+  userId          String          // Foreign Key to User
+  user            User            @relation(fields: [userId], references: [id])
+  works           Work[]          @relation("OrganizationToWork")
+  categories      Category[]      @relation("OrganizationToCategory")
+  technologies    Technology[]    @relation("OrganizationToTechnology")
+  companies       Company[]       @relation("OrganizationToCompany")
+  availabilities  Availability[]  @relation("OrganizationToAvailability")
+  modalities      Modality[]      @relation("OrganizationToModality")
+  locations       Location[]      @relation("OrganizationToLocation")
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([userId])
+}
+
+model Work {
+  id                String            @id @default(uuid())
+  name              String
+  shortDescription  String
+  longDescription   String            @db.Text
+  isArchived        Boolean           @default(false)
+  isFeatured        Boolean           @default(false)
+  categoryId        String            // Foreign Key to Category
+  category          Category          @relation(fields: [categoryId], references: [id])
+  technologyId      String            // Foreign Key to Technology
+  technology        Technology        @relation(fields: [technologyId], references: [id])
+  companyId         String            // Foreign Key to Company
+  company           Company           @relation(fields: [companyId], references: [id])
+  availabilityId    String            // Foreign Key to Availability
+  availability      Availability      @relation(fields: [availabilityId], references: [id])
+  modalityId        String            // Foreign Key to Modality
+  modality          Modality          @relation(fields: [modalityId], references: [id])
+  locationId        String            // Foreign Key to Location
+  location          Location          @relation(fields: [locationId], references: [id])
+  organizationId    String            // Foreign Key to Organization
+  organization      Organization      @relation("OrganizationToWork", fields: [organizationId], references: [id])
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@index([categoryId])
+  @@index([technologyId])
+  @@index([companyId])
+  @@index([availabilityId])
+  @@index([modalityId])
+  @@index([locationId])
+  @@index([organizationId])
+}
+
+model Category {
+  id             String        @id @default(uuid())
+  name           String
+  works          Work[]   
+  organizationId String        // Foreign Key to Organization
+  organization   Organization  @relation("OrganizationToCategory", fields: [organizationId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([organizationId])
+}
+
+
+model Technology {
+  id             String        @id @default(uuid())
+  name           String
+  works          Work[]   
+  organizationId String        // Foreign Key to Organization
+  organization   Organization  @relation("OrganizationToTechnology", fields: [organizationId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([organizationId])
+}
+
+model Company {
+  id             String        @id @default(uuid())
+  name           String
+  works          Work[]   
+  organizationId String        // Foreign Key to Organization
+  organization   Organization  @relation("OrganizationToCompany", fields: [organizationId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([organizationId])
+}
+
+model Availability {
+  id             String        @id @default(uuid())
+  name           String
+  works          Work[]   
+  organizationId String        // Foreign Key to Organization
+  organization   Organization  @relation("OrganizationToAvailability", fields: [organizationId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([organizationId])
+}
+
+model Modality {
+  id             String        @id @default(uuid())
+  name           String
+  works          Work[]   
+  organizationId String        // Foreign Key to Organization
+  organization   Organization  @relation("OrganizationToModality", fields: [organizationId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([organizationId])
+}
+
+model Location {
+  id             String        @id @default(uuid())
+  name           String
+  works          Work[]   
+  organizationId String        // Foreign Key to Organization
+  organization   Organization  @relation("OrganizationToLocation", fields: [organizationId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([organizationId])
+}
+
+model CV {
+  id          String    @id @default(uuid())
+  userId      String    // Foreign Key to User
+  user        User      @relation(fields: [userId], references: [id])
+  url         String    // URL of the CV
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model User {
+  id             String         @id @default(uuid())
+  name           String
+  email          String         @unique
+  password       String
+  cvs            CV[]      
+  organizations  Organization[] // Relation to Organization model
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+}
