@@ -91,17 +91,24 @@ export async function POST(
 
 export async function GET(
   req: Request,
-  { params }: { params: { organizationId: string } }
+  { params }: { params: { organizationId: string, modalityId?: string, technologyId?: string, categoryId?: string } }
 ) {
   try {
     if (!params.organizationId) {
       return new NextResponse("Organization id is required", { status: 400 });
     }
 
+    const { organizationId, modalityId, technologyId, categoryId } = params;
+
+    const filter = {
+      organizationId,
+      ...(modalityId && { modalityId }),
+      ...(technologyId && { technologyId }),
+      ...(categoryId && { categoryId }),
+    };
+
     const works = await prismadb.work.findMany({
-      where: {
-        organizationId: params.organizationId
-      },
+      where: filter,
       include: {
         category: true,
         availability: true,
