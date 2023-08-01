@@ -13,6 +13,10 @@ const WorkPage = async ({
     },
   });
 
+  if (!work) {
+    return <div>Work not found</div>;
+  }
+
   const categories = await prismadb.category.findMany({
     where: {
       organizationId: params.organizationId,
