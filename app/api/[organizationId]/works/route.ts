@@ -91,24 +91,27 @@ export async function POST(
 
 export async function GET(
   req: Request,
-  { params }: { params: { organizationId: string, modalityId?: string, technologyId?: string, categoryId?: string } }
+  { params }: { params: { organizationId: string } },
 ) {
   try {
+    const { searchParams } = new URL(req.url)
+    const modalityId = searchParams.get('modalityId') || undefined;
+    const technologyId = searchParams.get('technologyId') || undefined;
+    const categoryId = searchParams.get('categoryId') || undefined;
+    const isFeatured = searchParams.get('isFeatured');
+
     if (!params.organizationId) {
       return new NextResponse("Organization id is required", { status: 400 });
     }
 
-    const { organizationId, modalityId, technologyId, categoryId } = params;
-
-    const filter = {
-      organizationId,
-      ...(modalityId && { modalityId }),
-      ...(technologyId && { technologyId }),
-      ...(categoryId && { categoryId }),
-    };
-
     const works = await prismadb.work.findMany({
-      where: filter,
+      where: {
+        organizationId: params.organizationId,
+        modalityId,
+        technologyId,
+        categoryId,
+        isFeatured: isFeatured ? true : undefined,
+      },
       include: {
         category: true,
         availability: true,
