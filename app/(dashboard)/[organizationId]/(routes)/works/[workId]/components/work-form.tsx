@@ -45,7 +45,7 @@ const formSchema = z.object({
 type WorkFormValues = z.infer<typeof formSchema>
 
 interface WorkFormProps {
-  initialData: Work;
+  initialData: Work | null;
   categories: Category[];
   technologies: Technology[];
   companies: Company[];
