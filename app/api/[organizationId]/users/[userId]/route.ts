@@ -10,7 +10,12 @@ export async function GET(
 ) {
   try {
     if (!params.userId) {
-      return new NextResponse("User id is required", { status: 400 });
+      return new Response("User id is required", {
+        status: 400,
+        headers: {
+          'Access-Control-Allow-Origin': 'http://localhost:3000'
+        }
+      });
     }
 
     const user = await prismadb.user.findUnique({
@@ -21,13 +26,26 @@ export async function GET(
         cv: true
       }
     });
-  
-    return NextResponse.json(user);
+
+    return new Response(JSON.stringify(user), {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': 'http://localhost:3000',
+        'Content-Type': 'application/json'
+      }
+    });
+
   } catch (error) {
     console.log('[USER_GET]', error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new Response("Internal error", {
+      status: 500,
+      headers: {
+        'Access-Control-Allow-Origin': 'http://localhost:3000'
+      }
+    });
   }
-};
+}
+
 
 
 export async function DELETE(

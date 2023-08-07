@@ -66,11 +66,16 @@ export async function POST(
 
 export async function GET(
   req: Request,
-  { params }: { params: { organizationId: string } },
+  { params }: { params: { organizationId: string } }
 ) {
   try {
     if (!params.organizationId) {
-      return new NextResponse("Organization id is required", { status: 400 });
+      return new Response("Organization id is required", {
+        status: 400,
+        headers: {
+          'Access-Control-Allow-Origin': 'http://localhost:3000'
+        }
+      });
     }
 
     const users = await prismadb.user.findMany({
@@ -85,9 +90,21 @@ export async function GET(
       }
     });
 
-    return NextResponse.json(users);
+    return new Response(JSON.stringify(users), {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': 'http://localhost:3000',
+        'Content-Type': 'application/json'
+      }
+    });
+
   } catch (error) {
     console.log('[USERS_GET]', error);
-    return new NextResponse("Internal error", { status: 500 });
+    return new Response("Internal error", {
+      status: 500,
+      headers: {
+        'Access-Control-Allow-Origin': 'http://localhost:3000'
+      }
+    });
   }
-};
+}
