@@ -134,7 +134,7 @@ model Location {
 
 model CV {
   id          String    @id @default(uuid())
-  userId      String    // Foreign Key to User
+  userId      String    @unique // Makes it a one-to-one relation
   user        User      @relation(fields: [userId], references: [id])
   url         String    // URL of the CV
   createdAt   DateTime  @default(now())
@@ -145,11 +145,13 @@ model CV {
 
 model User {
   id             String         @id @default(uuid())
+  clerkId        String         @unique
   name           String
   email          String         @unique
-  password       String
-  cvs            CV[]      
-  organizations  Organization[] // Relation to Organization model
+  phoneNumber    String?
+  cv             CV?            // This indicates it's an optional one-to-one relation
+  organizationId String         
+  organizations  Organization[] 
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 }

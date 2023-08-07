@@ -19,9 +19,9 @@ export function MainNav({
       active: pathname === `/${params.organizationId}/works`,
     },
     {
-      href: `/${params.organizationId}/categories`,
-      label: 'Categorías',
-      active: pathname === `/${params.organizationId}/categories`,
+      href: `/${params.organizationId}/users`,
+      label: 'Usuarios',
+      active: pathname === `/${params.organizationId}/users`,
     },
     {
       href: `/${params.organizationId}/technologies`,
@@ -30,7 +30,7 @@ export function MainNav({
     },
     {
       href: `/${params.organizationId}/companies`,
-      label: 'Comañías',
+      label: 'Empresas',
       active: pathname === `/${params.organizationId}/companies`,
     },
     {
