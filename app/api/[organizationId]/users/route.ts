@@ -1,52 +1,37 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
-
 import prismadb from '@/lib/prismadb';
+import setCorsHeaders from '@/lib/cors';
 
 export async function POST(
   req: Request,
   { params }: { params: { organizationId: string } }
 ) {
   try {
-    const { userId } = auth();
-
     const body = await req.json();
+    const { name, email, phoneNumber, cvUrl, clerkId } = body;
 
-    const { name, email, phoneNumber, cvUrl } = body;
-
-    if (!userId) {
-      return new NextResponse("Unauthenticated", { status: 403 });
-    }
-
-    if (!name) {
-      return new NextResponse("Name is required", { status: 400 });
-    }
-
-    if (!email) {
-      return new NextResponse("Email is required", { status: 400 });
-    }
-
-    if (!cvUrl) {
-      return new NextResponse("CV URL is required", { status: 400 });
+    if (!name || !email || !clerkId || !cvUrl) {
+      const missingParams = ['name', 'email', 'clerkId', 'cvUrl'].filter(p => !body[p]);
+      return new NextResponse(`${missingParams.join(', ')} are required`, { status: 400 });
     }
 
     const organizationByUserId = await prismadb.organization.findFirst({
       where: {
-        id: params.organizationId,
-        userId
+        id: params.organizationId
       }
     });
 
     if (!organizationByUserId) {
-      return new NextResponse("Unauthorized", { status: 405 });
+      return new NextResponse("Organization not found", { status: 404 });
     }
 
     const user = await prismadb.user.create({
       data: {
         name,
         email,
-        phoneNumber,
-        clerkId: userId,
+        phoneNumber: phoneNumber || null, // Handle optional phone number
+        clerkId,
         organizationId: params.organizationId,
         cv: {
           create: {
@@ -55,7 +40,7 @@ export async function POST(
         }
       },
     });
-  
+
     return NextResponse.json(user);
   } catch (error) {
     console.log('[USERS_POST]', error);
@@ -63,48 +48,36 @@ export async function POST(
   }
 };
 
-
 export async function GET(
   req: Request,
-  { params }: { params: { organizationId: string } }
+  { params }: { params: { userId: string } }
 ) {
   try {
-    if (!params.organizationId) {
-      return new Response("Organization id is required", {
-        status: 400,
-        headers: {
-          'Access-Control-Allow-Origin': 'http://localhost:3000'
-        }
-      });
+    if (!params.userId) {
+      const response = new NextResponse("User id is required", { status: 400 });
+      return setCorsHeaders(response);
     }
 
-    const users = await prismadb.user.findMany({
+    const user = await prismadb.user.findUnique({
       where: {
-        organizationId: params.organizationId
+        clerkId: params.userId
       },
       include: {
         cv: true
-      },
-      orderBy: {
-        createdAt: 'desc'
       }
     });
 
-    return new Response(JSON.stringify(users), {
+    const response = new NextResponse(JSON.stringify(user), {
       status: 200,
       headers: {
-        'Access-Control-Allow-Origin': 'http://localhost:3000',
         'Content-Type': 'application/json'
       }
     });
-
+    
+    return setCorsHeaders(response);
   } catch (error) {
-    console.log('[USERS_GET]', error);
-    return new Response("Internal error", {
-      status: 500,
-      headers: {
-        'Access-Control-Allow-Origin': 'http://localhost:3000'
-      }
-    });
+    console.log('[USER_GET]', error);
+    const response = new NextResponse("Internal error", { status: 500 });
+    return setCorsHeaders(response);
   }
 }
