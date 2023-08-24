@@ -9,13 +9,13 @@ import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { ApiList } from "@/components/ui/api-list";
 
-import { WorkColumn, columns } from "./columns";
+import { PositionColumn, columns } from "./columns";
 
-interface WorksClientProps {
-  data: WorkColumn[];
+interface PositionsClientProps {
+  data: PositionColumn[];
 };
 
-export const WorksClient: React.FC<WorksClientProps> = ({
+export const PositionsClient: React.FC<PositionsClientProps> = ({
   data
 }) => {
   const params = useParams();
@@ -24,16 +24,16 @@ export const WorksClient: React.FC<WorksClientProps> = ({
   return (
     <> 
       <div className="flex items-center justify-between">
-        <Heading title={`Trabajos (${data.length})`} description="Administra los Trabajos disponibles" />
-        <Button onClick={() => router.push(`/${params.organizationId}/works/new`)}>
+        <Heading title={`Puestos (${data.length})`} description="Administra los Puestos de trabajo disponibles" />
+        <Button onClick={() => router.push(`/${params.organizationId}/positions/new`)}>
           <Plus className="mr-2 h-4 w-4" /> Crear nuevo
         </Button>
       </div>
       <Separator />
       <DataTable searchKey="name" columns={columns} data={data} />
-      <Heading title="API" description="API Calls for Works" />
+      <Heading title="API" description="API Calls for Positions" />
       <Separator />
-      <ApiList entityName="works" entityIdName="workId" />
+      <ApiList entityName="positions" entityIdName="positionId" />
     </>
   );
 };

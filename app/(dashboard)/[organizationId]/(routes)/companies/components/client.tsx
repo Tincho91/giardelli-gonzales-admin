@@ -24,7 +24,7 @@ export const CompaniesClient: React.FC<CompaniesClientProps> = ({
   return (
     <>
       <div className="flex items-center justify-between">
-        <Heading title={`Compañías (${data.length})`} description="Administra las Companías" />
+        <Heading title={`Empresas (${data.length})`} description="Administra las Empresas" />
         <Button onClick={() => router.push(`/${params.organizationId}/companies/new`)}>
           <Plus className="mr-2 h-4 w-4" /> Crear Nueva
         </Button>

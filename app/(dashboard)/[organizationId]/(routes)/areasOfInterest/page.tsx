@@ -2,15 +2,15 @@ import { format } from "date-fns";
 
 import prismadb from "@/lib/prismadb";
 
-import { TechnologyColumn } from "./components/columns"
-import { TechnologiesClient } from "./components/client";
+import { AreaOfInterestColumn } from "./components/columns"
+import { AreasOfInterestClient } from "./components/client";
 
-const TechnologiesPage = async ({
+const AreasOfInterestPage = async ({
   params
 }: {
   params: { organizationId: string }
 }) => {
-  const technologies = await prismadb.technology.findMany({
+  const areasOfInterest = await prismadb.areaOfInterest.findMany({
     where: {
       organizationId: params.organizationId
     },
@@ -19,7 +19,7 @@ const TechnologiesPage = async ({
     }
   });
 
-  const formattedCategories: TechnologyColumn[] = technologies.map((item) => ({
+  const formattedCategories: AreaOfInterestColumn[] = areasOfInterest.map((item) => ({
     id: item.id,
     name: item.name,
     createdAt: format(item.createdAt, 'MMMM do, yyyy'),
@@ -28,10 +28,10 @@ const TechnologiesPage = async ({
   return (
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
-        <TechnologiesClient data={formattedCategories} />
+        <AreasOfInterestClient data={formattedCategories} />
       </div>
     </div>
   );
 };
 
-export default TechnologiesPage;
+export default AreasOfInterestPage;

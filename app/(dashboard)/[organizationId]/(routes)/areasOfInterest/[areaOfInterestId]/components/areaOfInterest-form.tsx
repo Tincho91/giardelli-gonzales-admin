@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Technology } from "@prisma/client"
+import { AreaOfInterest } from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -28,13 +28,13 @@ const formSchema = z.object({
   name: z.string().min(2),
 });
 
-type TechnologyFormValues = z.infer<typeof formSchema>
+type AreaOfInterestFormValues = z.infer<typeof formSchema>
 
-interface TechnologyFormProps {
-  initialData: Technology | null;
+interface AreaOfInterestFormProps {
+  initialData: AreaOfInterest | null;
 };
 
-export const TechnologyForm: React.FC<TechnologyFormProps> = ({
+export const AreaOfInterestForm: React.FC<AreaOfInterestFormProps> = ({
   initialData,
 }) => {
   const params = useParams();
@@ -43,28 +43,28 @@ export const TechnologyForm: React.FC<TechnologyFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Editar Tecnología' : 'Crear Tecnología';
-  const description = initialData ? 'Editar una Tecnología.' : 'Crear nueva Tecnología.';
-  const toastMessage = initialData ? 'Tecnología actualizada.' : 'Tecnología creada.';
+  const title = initialData ? 'Editar Área de Interés' : 'Crear Área de Interés';
+  const description = initialData ? 'Editar una Área de Interés.' : 'Crear nueva Área de Interés.';
+  const toastMessage = initialData ? 'Área de Interés actualizada.' : 'Área de Interés creada.';
   const action = initialData ? 'Guardar Cambios' : 'Crear';
 
-  const form = useForm<TechnologyFormValues>({
+  const form = useForm<AreaOfInterestFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
       name: '',
     }
   });
 
-  const onSubmit = async (data: TechnologyFormValues) => {
+  const onSubmit = async (data: AreaOfInterestFormValues) => {
     try {
       setLoading(true);
       if (initialData) {
-        await axios.patch(`/api/${params.organizationId}/technologies/${params.technologyId}`, data);
+        await axios.patch(`/api/${params.organizationId}/areasOfInterest/${params.areaOfInterestId}`, data);
       } else {
-        await axios.post(`/api/${params.organizationId}/technologies`, data);
+        await axios.post(`/api/${params.organizationId}/areasOfInterest`, data);
       }
       router.refresh();
-      router.push(`/${params.organizationId}/technologies`);
+      router.push(`/${params.organizationId}/areasOfInterest`);
       toast.success(toastMessage);
     } catch (error: any) {
       toast.error('Something went wrong.');
@@ -76,12 +76,12 @@ export const TechnologyForm: React.FC<TechnologyFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.organizationId}/technologies/${params.technologyId}`);
+      await axios.delete(`/api/${params.organizationId}/areasOfInterest/${params.areaOfInterestId}`);
       router.refresh();
-      router.push(`/${params.organizationId}/technologies`);
-      toast.success('Tecnología eliminada.');
+      router.push(`/${params.organizationId}/areasOfInterest`);
+      toast.success('Área de Interés eliminada.');
     } catch (error: any) {
-      toast.error('Make sure you removed all products using this Technology first.');
+      toast.error('Make sure you removed all products using this AreaOfInterest first.');
     } finally {
       setLoading(false);
       setOpen(false);
@@ -120,7 +120,7 @@ export const TechnologyForm: React.FC<TechnologyFormProps> = ({
                 <FormItem>
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Nombre de la Tecnología" {...field} />
+                    <Input disabled={loading} placeholder="Nombre del Área de interés" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

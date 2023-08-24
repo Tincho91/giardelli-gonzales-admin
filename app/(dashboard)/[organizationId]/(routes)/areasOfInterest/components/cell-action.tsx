@@ -16,10 +16,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AlertModal } from "@/components/modals/alert-modal";
 
-import { TechnologyColumn } from "./columns";
+import { AreaOfInterestColumn } from "./columns";
 
 interface CellActionProps {
-  data: TechnologyColumn;
+  data: AreaOfInterestColumn;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({
@@ -33,8 +33,8 @@ export const CellAction: React.FC<CellActionProps> = ({
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.organizationId}/technologies/${data.id}`);
-      toast.success('Tecnología borrada.');
+      await axios.delete(`/api/${params.organizationId}/areasOfInterest/${data.id}`);
+      toast.success('Área de interés borrada.');
       router.refresh();
     } catch (error) {
       toast.error('Make sure you removed all products using this technology first.');
@@ -46,7 +46,7 @@ export const CellAction: React.FC<CellActionProps> = ({
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success('Technology ID copied to clipboard.');
+    toast.success('AreaOfInterest ID copied to clipboard.');
   }
 
   return (
@@ -72,7 +72,7 @@ export const CellAction: React.FC<CellActionProps> = ({
             <Copy className="mr-2 h-4 w-4" /> Copiar ID
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => router.push(`/${params.organizationId}/technologies/${data.id}`)}
+            onClick={() => router.push(`/${params.organizationId}/areasOfInterest/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Actualizar
           </DropdownMenuItem>

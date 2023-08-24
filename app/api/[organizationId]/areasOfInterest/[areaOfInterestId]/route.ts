@@ -5,29 +5,29 @@ import prismadb from "@/lib/prismadb";
 
 export async function GET(
   req: Request,
-  { params }: { params: { technologyId: string } }
+  { params }: { params: { areaOfInterestId: string } }
 ) {
   try {
-    if (!params.technologyId) {
-      return new NextResponse("Technology id is required", { status: 400 });
+    if (!params.areaOfInterestId) {
+      return new NextResponse("Area Of Interest id is required", { status: 400 });
     }
 
-    const technology = await prismadb.technology.findUnique({
+    const areaOfInterest = await prismadb.areaOfInterest.findUnique({
       where: {
-        id: params.technologyId
+        id: params.areaOfInterestId
       },
     });
   
-    return NextResponse.json(technology);
+    return NextResponse.json(areaOfInterest);
   } catch (error) {
-    console.log('[TECHNOLOGY_GET]', error);
+    console.log('[AREAOFINTEREST_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { technologyId: string, organizationId: string } }
+  { params }: { params: { areaOfInterestId: string, organizationId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -36,8 +36,8 @@ export async function DELETE(
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!params.technologyId) {
-      return new NextResponse("technology id is required", { status: 400 });
+    if (!params.areaOfInterestId) {
+      return new NextResponse("areaOfInterest id is required", { status: 400 });
     }
 
     const organizationByUserId = await prismadb.organization.findFirst({
@@ -51,15 +51,15 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const technology = await prismadb.technology.delete({
+    const areaOfInterest = await prismadb.areaOfInterest.delete({
       where: {
-        id: params.technologyId,
+        id: params.areaOfInterestId,
       }
     });
   
-    return NextResponse.json(technology);
+    return NextResponse.json(areaOfInterest);
   } catch (error) {
-    console.log('[TECHNOLOGY_DELETE]', error);
+    console.log('[AREAOFINTEREST_DELETE]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -67,7 +67,7 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { technologyId: string, organizationId: string } }
+  { params }: { params: { areaOfInterestId: string, organizationId: string } }
 ) {
   try {   
     const { userId } = auth();
@@ -84,8 +84,8 @@ export async function PATCH(
       return new NextResponse("Name is required", { status: 400 });
     }
 
-    if (!params.technologyId) {
-      return new NextResponse("technology id is required", { status: 400 });
+    if (!params.areaOfInterestId) {
+      return new NextResponse("areaOfInterest id is required", { status: 400 });
     }
 
     const organizationByUserId = await prismadb.organization.findFirst({
@@ -99,18 +99,18 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const technology = await prismadb.technology.update({
+    const areaOfInterest = await prismadb.areaOfInterest.update({
       where: {
-        id: params.technologyId,
+        id: params.areaOfInterestId,
       },
       data: {
         name,
       }
     });
   
-    return NextResponse.json(technology);
+    return NextResponse.json(areaOfInterest);
   } catch (error) {
-    console.log('[TECHNOLOGY_PATCH]', error);
+    console.log('[AREAOFINTEREST_PATCH]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

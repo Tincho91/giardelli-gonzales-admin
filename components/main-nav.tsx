@@ -14,9 +14,9 @@ export function MainNav({
 
   const routes = [
     {
-      href: `/${params.organizationId}/works`,
-      label: 'Trabajos',
-      active: pathname === `/${params.organizationId}/works`,
+      href: `/${params.organizationId}/positions`,
+      label: 'Puestos',
+      active: pathname === `/${params.organizationId}/positions`,
     },
     {
       href: `/${params.organizationId}/users`,
@@ -24,9 +24,9 @@ export function MainNav({
       active: pathname === `/${params.organizationId}/users`,
     },
     {
-      href: `/${params.organizationId}/technologies`,
-      label: 'Tecnologías',
-      active: pathname === `/${params.organizationId}/technologies`,
+      href: `/${params.organizationId}/areasOfInterest`,
+      label: 'Areas de Interés',
+      active: pathname === `/${params.organizationId}/areasOfInterest`,
     },
     {
       href: `/${params.organizationId}/companies`,

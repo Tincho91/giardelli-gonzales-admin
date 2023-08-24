@@ -43,9 +43,9 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Editar Companía' : 'Crear Companía';
-  const description = initialData ? 'Editar una Companía.' : 'Crear nueva Companía.';
-  const toastMessage = initialData ? 'Companía actualizada.' : 'Companía creada.';
+  const title = initialData ? 'Editar Empresa' : 'Crear Empresa';
+  const description = initialData ? 'Editar una Empresa.' : 'Crear nueva Empresa.';
+  const toastMessage = initialData ? 'Empresa actualizada.' : 'Empresa creada.';
   const action = initialData ? 'Guardar Cambios' : 'Crear';
 
   const form = useForm<CompanyFormValues>({
@@ -79,7 +79,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
       await axios.delete(`/api/${params.organizationId}/companies/${params.CompanyId}`);
       router.refresh();
       router.push(`/${params.organizationId}/companies`);
-      toast.success('Companía eliminada.');
+      toast.success('Empresa eliminada.');
     } catch (error: any) {
       toast.error('Make sure you removed all products using this Company first.');
     } finally {
@@ -120,7 +120,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
                 <FormItem>
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Nombre de la Compañia" {...field} />
+                    <Input disabled={loading} placeholder="Nombre de la Empresa" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

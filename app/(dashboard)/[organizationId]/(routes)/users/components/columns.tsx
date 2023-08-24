@@ -9,7 +9,7 @@ export type UserColumn = {
   id: string
   name: string;
   createdAt: string;
-  cvUrl?: string;
+  cvUrl: string;
 }
 
 export const columns: ColumnDef<UserColumn>[] = [
@@ -26,6 +26,7 @@ export const columns: ColumnDef<UserColumn>[] = [
         rel="noopener noreferrer"
         title="View CV"
       >
+        <p>ver cv</p>
         <Clipboard />
       </a>
     ) : null,

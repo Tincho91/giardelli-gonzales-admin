@@ -8,14 +8,14 @@ import { DataTable } from "@/components/ui/data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 
-import { columns, TechnologyColumn } from "./columns";
+import { columns, AreaOfInterestColumn } from "./columns";
 import { ApiList } from "@/components/ui/api-list";
 
-interface TechnologiesClientProps {
-  data: TechnologyColumn[];
+interface AreasOfInterestClientProps {
+  data: AreaOfInterestColumn[];
 }
 
-export const TechnologiesClient: React.FC<TechnologiesClientProps> = ({
+export const AreasOfInterestClient: React.FC<AreasOfInterestClientProps> = ({
   data
 }) => {
   const params = useParams();
@@ -24,16 +24,16 @@ export const TechnologiesClient: React.FC<TechnologiesClientProps> = ({
   return (
     <>
       <div className="flex items-center justify-between">
-        <Heading title={`Tecnologías (${data.length})`} description="Administra las tecnologías" />
-        <Button onClick={() => router.push(`/${params.organizationId}/technologies/new`)}>
+        <Heading title={`Áreas de Interés (${data.length})`} description="Administra las áreas de interés" />
+        <Button onClick={() => router.push(`/${params.organizationId}/areasOfInterest/new`)}>
           <Plus className="mr-2 h-4 w-4" /> Crear Nueva
         </Button>
       </div>
       <Separator />
       <DataTable searchKey="name" columns={columns} data={data} />
-      <Heading title="API" description="API Calls for Tecnhologies" />
+      <Heading title="API" description="API Calls for Areas of Interest" />
       <Separator />
-      <ApiList entityName="technologies" entityIdName="technologyId" />
+      <ApiList entityName="areasOfInterest" entityIdName="areaofInterestId" />
     </>
   );
 };

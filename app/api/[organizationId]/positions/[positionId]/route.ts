@@ -5,20 +5,19 @@ import prismadb from "@/lib/prismadb";
 
 export async function GET(
   req: Request,
-  { params }: { params: { workId: string } }
+  { params }: { params: { positionId: string } }
 ) {
   try {
-    if (!params.workId) {
-      return new NextResponse("work id is required", { status: 400 });
+    if (!params.positionId) {
+      return new NextResponse("Position id is required", { status: 400 });
     }
 
-    const work = await prismadb.work.findUnique({
+    const position = await prismadb.position.findUnique({
       where: {
-        id: params.workId,
+        id: params.positionId,
       },
       include: {
-        category: true,
-        technology: true,
+        areaOfInterest: true,
         company: true,
         availability: true,
         modality: true,
@@ -26,16 +25,16 @@ export async function GET(
       },
     });
   
-    return NextResponse.json(work);
+    return NextResponse.json(position);
   } catch (error) {
-    console.log('[work_GET]', error);
+    console.log('[Position_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { workId: string, organizationId: string } }
+  { params }: { params: { positionId: string, organizationId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -44,8 +43,8 @@ export async function DELETE(
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!params.workId) {
-      return new NextResponse("work id is required", { status: 400 });
+    if (!params.positionId) {
+      return new NextResponse("position id is required", { status: 400 });
     }
 
     const organizationByUserId = await prismadb.organization.findFirst({
@@ -59,15 +58,15 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const work = await prismadb.work.delete({
+    const position = await prismadb.position.delete({
       where: {
-        id: params.workId
+        id: params.positionId
       },
     });
   
-    return NextResponse.json(work);
+    return NextResponse.json(position);
   } catch (error) {
-    console.log('[work_DELETE]', error);
+    console.log('[position_DELETE]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -75,14 +74,14 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { workId: string, organizationId: string } }
+  { params }: { params: { positionId: string, organizationId: string } }
 ) {
   try {
     const { userId } = auth();
 
     const body = await req.json();
 
-    const { name, shortDescription, longDescription, categoryId, isArchived, isFeatured, technologyId, companyId, availabilityId, modalityId, locationId } = body;
+    const { name, shortDescription, longDescription, areaOfInterestId, isArchived, isFeatured, companyId, availabilityId, modalityId, locationId } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -100,12 +99,12 @@ export async function PATCH(
       return new NextResponse("Category id is required", { status: 400 });
     }
 
-    if (!technologyId) {
-      return new NextResponse("Color id is required", { status: 400 });
-    }
-
     if (!locationId) {
       return new NextResponse("Size id is required", { status: 400 });
+    }
+
+    if (!areaOfInterestId) {
+      return new NextResponse("Area de Interes id is required", { status: 400 });
     }
 
     if (!modalityId) {
@@ -135,9 +134,9 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    await prismadb.work.update({
+    await prismadb.position.update({
       where: {
-        id: params.workId,
+        id: params.positionId,
       },
       data: {
         name,
@@ -145,8 +144,7 @@ export async function PATCH(
         longDescription,
         isArchived,
         isFeatured,
-        categoryId,
-        technologyId,
+        areaOfInterestId,
         companyId,
         availabilityId,
         modalityId,
@@ -154,9 +152,9 @@ export async function PATCH(
       },
     });
 
-    const work = await prismadb.work.update({
+    const position = await prismadb.position.update({
       where: {
-        id: params.workId
+        id: params.positionId
       },
       data: {
         name,
@@ -164,8 +162,7 @@ export async function PATCH(
         longDescription,
         isArchived,
         isFeatured,
-        categoryId,
-        technologyId,
+        areaOfInterestId,
         companyId,
         availabilityId,
         modalityId,
@@ -173,7 +170,7 @@ export async function PATCH(
       },
     });
   
-    return NextResponse.json(work);
+    return NextResponse.json(position);
   } catch (error) {
     console.log('[WORK_PATCH]', error);
     return new NextResponse("Internal error", { status: 500 });

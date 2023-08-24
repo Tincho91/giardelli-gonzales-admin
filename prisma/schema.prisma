@@ -13,9 +13,8 @@ model Organization {
   name            String
   userId          String          // Foreign Key to User
   user            User            @relation(fields: [userId], references: [id])
-  works           Work[]          @relation("OrganizationToWork")
-  categories      Category[]      @relation("OrganizationToCategory")
-  technologies    Technology[]    @relation("OrganizationToTechnology")
+  positions       Position[]      @relation("OrganizationToPosition")
+  areasOfInterest AreaOfInterest[] @relation("OrganizationToAreaOfInterest")
   companies       Company[]       @relation("OrganizationToCompany")
   availabilities  Availability[]  @relation("OrganizationToAvailability")
   modalities      Modality[]      @relation("OrganizationToModality")
@@ -26,32 +25,30 @@ model Organization {
   @@index([userId])
 }
 
-model Work {
+model Position {
   id                String            @id @default(uuid())
   name              String
   shortDescription  String
   longDescription   String            @db.Text
   isArchived        Boolean           @default(false)
   isFeatured        Boolean           @default(false)
-  categoryId        String            // Foreign Key to Category
-  category          Category          @relation(fields: [categoryId], references: [id])
-  technologyId      String            // Foreign Key to Technology
-  technology        Technology        @relation(fields: [technologyId], references: [id])
+  areaOfInterestId  String            // Foreign Key to AreaOfInterest
+  areaOfInterest    AreaOfInterest    @relation(fields: [areaOfInterestId], references: [id])
   companyId         String            // Foreign Key to Company
   company           Company           @relation(fields: [companyId], references: [id])
   availabilityId    String            // Foreign Key to Availability
   availability      Availability      @relation(fields: [availabilityId], references: [id])
+  applications      UserApplication[]
   modalityId        String            // Foreign Key to Modality
   modality          Modality          @relation(fields: [modalityId], references: [id])
   locationId        String            // Foreign Key to Location
   location          Location          @relation(fields: [locationId], references: [id])
   organizationId    String            // Foreign Key to Organization
-  organization      Organization      @relation("OrganizationToWork", fields: [organizationId], references: [id])
+  organization      Organization      @relation("OrganizationToPosition", fields: [organizationId], references: [id])
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
 
-  @@index([categoryId])
-  @@index([technologyId])
+  @@index([areaOfInterestId])
   @@index([companyId])
   @@index([availabilityId])
   @@index([modalityId])
@@ -59,25 +56,12 @@ model Work {
   @@index([organizationId])
 }
 
-model Category {
+model AreaOfInterest {
   id             String        @id @default(uuid())
   name           String
-  works          Work[]   
+  positions      Position[]   
   organizationId String        // Foreign Key to Organization
-  organization   Organization  @relation("OrganizationToCategory", fields: [organizationId], references: [id])
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-
-  @@index([organizationId])
-}
-
-
-model Technology {
-  id             String        @id @default(uuid())
-  name           String
-  works          Work[]   
-  organizationId String        // Foreign Key to Organization
-  organization   Organization  @relation("OrganizationToTechnology", fields: [organizationId], references: [id])
+  organization   Organization  @relation("OrganizationToAreaOfInterest", fields: [organizationId], references: [id])
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
@@ -87,7 +71,7 @@ model Technology {
 model Company {
   id             String        @id @default(uuid())
   name           String
-  works          Work[]   
+  positions      Position[]   
   organizationId String        // Foreign Key to Organization
   organization   Organization  @relation("OrganizationToCompany", fields: [organizationId], references: [id])
   createdAt      DateTime      @default(now())
@@ -99,7 +83,7 @@ model Company {
 model Availability {
   id             String        @id @default(uuid())
   name           String
-  works          Work[]   
+  positions      Position[]   
   organizationId String        // Foreign Key to Organization
   organization   Organization  @relation("OrganizationToAvailability", fields: [organizationId], references: [id])
   createdAt      DateTime      @default(now())
@@ -111,7 +95,7 @@ model Availability {
 model Modality {
   id             String        @id @default(uuid())
   name           String
-  works          Work[]   
+  positions      Position[]   
   organizationId String        // Foreign Key to Organization
   organization   Organization  @relation("OrganizationToModality", fields: [organizationId], references: [id])
   createdAt      DateTime      @default(now())
@@ -123,7 +107,7 @@ model Modality {
 model Location {
   id             String        @id @default(uuid())
   name           String
-  works          Work[]   
+  positions      Position[]   
   organizationId String        // Foreign Key to Organization
   organization   Organization  @relation("OrganizationToLocation", fields: [organizationId], references: [id])
   createdAt      DateTime      @default(now())
@@ -132,26 +116,37 @@ model Location {
   @@index([organizationId])
 }
 
-model CV {
-  id          String    @id @default(uuid())
-  userId      String    @unique // Makes it a one-to-one relation
-  user        User      @relation(fields: [userId], references: [id])
-  url         String    // URL of the CV
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@index([userId])
-}
-
 model User {
   id             String         @id @default(uuid())
   clerkId        String         @unique
   name           String
   email          String         @unique
-  phoneNumber    String?
-  cv             CV?            // This indicates it's an optional one-to-one relation
+  phoneNumber    String         // Made this required
+  cvUrl          String         
+  linkedinUrl    String?        // Added linkedinUrl
   organizationId String         
   organizations  Organization[] 
+  applications   UserApplication[]  // To check which jobs they applied for
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
+}
+
+model UserApplication {
+  id            String   @id @default(uuid())
+  userId        String   // Foreign Key to User
+  user          User     @relation(fields: [userId], references: [id])
+  positionId    String   // Foreign Key to Position
+  position      Position @relation(fields: [positionId], references: [id])
+  status        ApplicationStatus @default(HOLD) // Status of the application: APPROVED, DISAPPROVED, or HOLD
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([positionId])
+  @@index([userId, positionId])
+}
+
+enum ApplicationStatus {
+  APPROVED
+  DISAPPROVED
+  HOLD
 }

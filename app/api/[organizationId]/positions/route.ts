@@ -12,7 +12,7 @@ export async function POST(
 
     const body = await req.json();
 
-    const { name, shortDescription, longDescription, categoryId, isArchived, isFeatured, technologyId, companyId, availabilityId, modalityId, locationId } = body;
+    const { name, shortDescription, longDescription, areaOfInterestId, isArchived, isFeatured, companyId, availabilityId, modalityId, locationId } = body;
 
     if (!userId) {
       return new NextResponse("Unauthenticated", { status: 403 });
@@ -30,16 +30,16 @@ export async function POST(
       return new NextResponse("Category id is required", { status: 400 });
     }
 
-    if (!technologyId) {
-      return new NextResponse("Color id is required", { status: 400 });
-    }
-
     if (!locationId) {
       return new NextResponse("Size id is required", { status: 400 });
     }
 
     if (!modalityId) {
       return new NextResponse("Size id is required", { status: 400 });
+    }
+
+    if (!areaOfInterestId) {
+      return new NextResponse("Area Of Interest id is required", { status: 400 });
     }
 
     if (!availabilityId) {
@@ -65,24 +65,23 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const work = await prismadb.work.create({
+    const position = await prismadb.position.create({
       data: {
         name,
         shortDescription,
         longDescription,
+        areaOfInterestId,
         isArchived,
         isFeatured,
-        technologyId,
         companyId,
         availabilityId,
         modalityId,
         locationId,
         organizationId: params.organizationId,
-        categoryId,
       },
     });
   
-    return NextResponse.json(work);
+    return NextResponse.json(position);
   } catch (error) {
     console.log('[WORKS_POST]', error);
     return new NextResponse("Internal error", { status: 500 });
@@ -97,7 +96,7 @@ export async function GET(
     const { searchParams } = new URL(req.url)
     const modalityId = searchParams.get('modalityId') || undefined;
     const technologyId = searchParams.get('technologyId') || undefined;
-    const categoryId = searchParams.get('categoryId') || undefined;
+    const areaOfInterestId = searchParams.get('areaOfInterestId') || undefined;
     const locationId = searchParams.get('locationId') || undefined;
     const availabilityId = searchParams.get('availabilityId') || undefined;
     const companyId = searchParams.get('companyId') || undefined;
@@ -107,31 +106,29 @@ export async function GET(
       return new NextResponse("Organization id is required", { status: 400 });
     }
 
-    const works = await prismadb.work.findMany({
+    const positions = await prismadb.position.findMany({
       where: {
         organizationId: params.organizationId,
         modalityId,
-        technologyId,
         availabilityId,
         companyId,
         locationId,
-        categoryId,
+        areaOfInterestId,
         isFeatured: isFeatured ? true : undefined,
       },
       include: {
-        category: true,
+        areaOfInterest: true,
         availability: true,
         company: true,
         location: true,
         modality: true,
-        technology: true,
       },
       orderBy: {
         createdAt: 'desc'
       }
     });
 
-    return NextResponse.json(works);
+    return NextResponse.json(positions);
   } catch (error) {
     console.log('[WORKS_GET]', error);
     return new NextResponse("Internal error", { status: 500 });

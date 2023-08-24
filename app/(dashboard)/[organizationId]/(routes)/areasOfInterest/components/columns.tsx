@@ -4,13 +4,13 @@ import { ColumnDef } from "@tanstack/react-table"
 
 import { CellAction } from "./cell-action"
 
-export type TechnologyColumn = {
+export type AreaOfInterestColumn = {
   id: string
   name: string;
   createdAt: string;
 }
 
-export const columns: ColumnDef<TechnologyColumn>[] = [
+export const columns: ColumnDef<AreaOfInterestColumn>[] = [
   {
     accessorKey: "name",
     header: "Nombre",

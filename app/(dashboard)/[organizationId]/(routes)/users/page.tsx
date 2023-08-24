@@ -22,6 +22,7 @@ const UsersPage = async ({
   const formattedUsers: UserColumn[] = users.map((item) => ({
     id: item.id,
     name: item.name,
+    cvUrl: item.cvUrl,
     createdAt: format(item.createdAt, 'MMMM do, yyyy'),
   }));
 

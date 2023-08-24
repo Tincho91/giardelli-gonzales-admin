@@ -1,25 +1,19 @@
 import prismadb from "@/lib/prismadb";
 
-import { WorkForm } from "./components/work-form";
+import { PositionForm } from "./components/position-form";
 
-const WorkPage = async ({
+const PositionPage = async ({
   params
 }: {
-  params: { workId: string, organizationId: string }
+  params: { positionId: string, organizationId: string }
 }) => {
-  const work = await prismadb.work.findFirst({
+  const position = await prismadb.position.findFirst({
     where: {
-      id: params.workId,
+      id: params.positionId,
     },
   });
 
-  const categories = await prismadb.category.findMany({
-    where: {
-      organizationId: params.organizationId,
-    },
-  });
-
-  const technologies = await prismadb.technology.findMany({
+  const areasOfInterest = await prismadb.areaOfInterest.findMany({
     where: {
       organizationId: params.organizationId,
     },
@@ -52,18 +46,17 @@ const WorkPage = async ({
   return ( 
     <div className="flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
-      <WorkForm 
-        categories={categories}
-        technologies={technologies}
+      <PositionForm 
+        areasOfInterest={areasOfInterest}
         companies={companies}
         availabilities={availabilities}
         modalities={modalities}
         locations={locations}
-        initialData={work}
+        initialData={position}
       />
       </div>
     </div>
   );
 }
 
-export default WorkPage;
+export default PositionPage;

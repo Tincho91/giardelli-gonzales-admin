@@ -17,9 +17,6 @@ export async function GET(
       where: {
         id: params.userId
       },
-      include: {
-        cv: true
-      }
     });
 
     const response = new NextResponse(JSON.stringify(user), {
@@ -81,13 +78,8 @@ export async function PATCH(
   { params }: { params: { userId: string, organizationId: string } }
 ) {
   try {   
-    const { userId: currentUserId } = auth();
     const body = await req.json();
     const { name, email, phoneNumber, cvUrl } = body;
-    
-    if (!currentUserId) {
-      return setCorsHeaders(new NextResponse("Unauthenticated", { status: 403 }));
-    }
 
     if (!params.userId) {
       return setCorsHeaders(new NextResponse("User id is required", { status: 400 }));
@@ -96,7 +88,6 @@ export async function PATCH(
     const organizationByUserId = await prismadb.organization.findFirst({
       where: {
         id: params.organizationId,
-        userId: currentUserId,
       }
     });
 
@@ -112,11 +103,7 @@ export async function PATCH(
         name,
         email,
         phoneNumber,
-        cv: {
-          update: {
-            url: cvUrl
-          }
-        }
+        cvUrl,
       }
     });
   

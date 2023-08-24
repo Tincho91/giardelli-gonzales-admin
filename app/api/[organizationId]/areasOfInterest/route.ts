@@ -37,16 +37,16 @@ export async function POST(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const technology = await prismadb.technology.create({
+    const areaOfInterest = await prismadb.areaOfInterest.create({
       data: {
         name,
         organizationId: params.organizationId,
       }
     });
   
-    return NextResponse.json(technology);
+    return NextResponse.json(areaOfInterest);
   } catch (error) {
-    console.log('[TECHNOLOGIES_POST]', error);
+    console.log('[AREASOFINTEREST_POST]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -60,15 +60,15 @@ export async function GET(
       return new NextResponse("Organization id is required", { status: 400 });
     }
 
-    const technologies = await prismadb.technology.findMany({
+    const areasofInterest = await prismadb.areaOfInterest.findMany({
       where: {
         organizationId: params.organizationId
       }
     });
   
-    return NextResponse.json(technologies);
+    return NextResponse.json(areasofInterest);
   } catch (error) {
-    console.log('[TECHNOLOGIES_GET]', error);
+    console.log('[AREASOFINTEREST_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };

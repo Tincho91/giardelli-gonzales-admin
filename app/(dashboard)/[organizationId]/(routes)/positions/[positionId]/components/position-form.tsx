@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Work, Category, Technology, Company, Availability, Modality, Location } from "@prisma/client";
+import { Position, AreaOfInterest, Company, Availability, Modality, Location } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -34,30 +34,27 @@ const formSchema = z.object({
   longDescription: z.string().min(1),
   isArchived: z.boolean().default(false),
   isFeatured: z.boolean().default(false),
-  categoryId: z.string().min(1),
-  technologyId: z.string().min(1),
+  areaOfInterestId: z.string().min(1),
   companyId: z.string().min(1),
   availabilityId: z.string().min(1),
   modalityId: z.string().min(1),
   locationId: z.string().min(1),
 });
 
-type WorkFormValues = z.infer<typeof formSchema>
+type PositionFormValues = z.infer<typeof formSchema>
 
-interface WorkFormProps {
-  initialData: Work | null;
-  categories: Category[];
-  technologies: Technology[];
+interface PositionFormProps {
+  initialData: Position | null;
+  areasOfInterest: AreaOfInterest[];
   companies: Company[];
   availabilities: Availability[];
   modalities: Modality[];
   locations: Location[];
 };
 
-export const WorkForm: React.FC<WorkFormProps> = ({
+export const PositionForm: React.FC<PositionFormProps> = ({
   initialData,
-  categories,
-  technologies,
+  areasOfInterest,
   companies,
   availabilities,
   modalities,
@@ -70,9 +67,9 @@ export const WorkForm: React.FC<WorkFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Editar Trabajo' : 'Crear Trabajo';
-  const description = initialData ? 'Editar un Trabajo.' : 'Agregar nuevo Trabajo';
-  const toastMessage = initialData ? 'Trabajo actualizado.' : 'Trabajo creado.';
+  const title = initialData ? 'Editar Puesto' : 'Crear Puesto';
+  const description = initialData ? 'Editar un Puesto.' : 'Agregar nuevo Puesto';
+  const toastMessage = initialData ? 'Puesto actualizado.' : 'Puesto creado.';
   const action = initialData ? 'Guarder cambios' : 'Crear';
 
   const defaultValues = initialData ? {
@@ -81,27 +78,27 @@ export const WorkForm: React.FC<WorkFormProps> = ({
     name: '',
     isFeatured: false,
     isArchived: false,
-    categories: [],
+    areasOfInterest: [],
   }
 
-  const form = useForm<WorkFormValues>({
+  const form = useForm<PositionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues
   });
 
-  const onSubmit = async (data: Omit<WorkFormValues, 'categories'>) => {
+  const onSubmit = async (data: Omit<PositionFormValues, 'areasOfInterest'>) => {
     try {
       setLoading(true);
       const formData = {
         ...data,
       };
       if (initialData) {
-        await axios.patch(`/api/${params.organizationId}/works/${params.workId}`, formData);
+        await axios.patch(`/api/${params.organizationId}/positions/${params.positionId}`, formData);
       } else {
-        await axios.post(`/api/${params.organizationId}/works`, formData);
+        await axios.post(`/api/${params.organizationId}/positions`, formData);
       }
       router.refresh();
-      router.push(`/${params.organizationId}/works`);
+      router.push(`/${params.organizationId}/positions`);
       toast.success(toastMessage);
     } catch (error: any) {
       toast.error('Something went wrong.');
@@ -113,10 +110,10 @@ export const WorkForm: React.FC<WorkFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.organizationId}/works/${params.workId}`);
+      await axios.delete(`/api/${params.organizationId}/positions/${params.positionId}`);
       router.refresh();
-      router.push(`/${params.organizationId}/works`);
-      toast.success('Work deleted.');
+      router.push(`/${params.organizationId}/positions`);
+      toast.success('Position deleted.');
     } catch (error: any) {
       toast.error('Something went wrong.');
     } finally {
@@ -158,7 +155,7 @@ export const WorkForm: React.FC<WorkFormProps> = ({
                 <FormItem>
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Nombre del Trabajo" {...field} />
+                    <Input disabled={loading} placeholder="Nombre del Puesto" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -194,42 +191,19 @@ export const WorkForm: React.FC<WorkFormProps> = ({
 
             <FormField
               control={form.control}
-              name="categoryId"
+              name="areaOfInterestId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Categoría</FormLabel>
+                  <FormLabel>Área de Interés</FormLabel>
                   <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue defaultValue={field.value} placeholder="Selecciona una Categoría" />
+                        <SelectValue defaultValue={field.value} placeholder="Selecciona un Área de Intrés" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="technologyId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tecnología</FormLabel>
-                  <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue defaultValue={field.value} placeholder="Selecciona una Technología" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {technologies.map((technology) => (
-                        <SelectItem key={technology.id} value={technology.id}>{technology.name}</SelectItem>
+                      {areasOfInterest.map((areaOfInterest) => (
+                        <SelectItem key={areaOfInterest.id} value={areaOfInterest.id}>{areaOfInterest.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -243,7 +217,7 @@ export const WorkForm: React.FC<WorkFormProps> = ({
               name="companyId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Compñía</FormLabel>
+                  <FormLabel>Empresa</FormLabel>
                   <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -346,7 +320,7 @@ export const WorkForm: React.FC<WorkFormProps> = ({
                       Destacado
                     </FormLabel>
                     <FormDescription>
-                      Este Trabajo aparecerá en la página principal
+                      Este Puesto aparecerá en la página principal
                     </FormDescription>
                   </div>
                 </FormItem>
@@ -369,7 +343,7 @@ export const WorkForm: React.FC<WorkFormProps> = ({
                       Archivado
                     </FormLabel>
                     <FormDescription>
-                      Este Trabajo no se mostrará en la tienda
+                      Este Puesto no se mostrará en la web
                     </FormDescription>
                   </div>
                 </FormItem>
