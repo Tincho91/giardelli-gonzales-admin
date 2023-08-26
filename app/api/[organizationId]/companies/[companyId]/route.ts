@@ -5,29 +5,29 @@ import prismadb from "@/lib/prismadb";
 
 export async function GET(
   req: Request,
-  { params }: { params: { categoryId: string } }
+  { params }: { params: { companyId: string } }
 ) {
   try {
-    if (!params.categoryId) {
+    if (!params.companyId) {
       return new NextResponse("Category id is required", { status: 400 });
     }
 
-    const category = await prismadb.category.findUnique({
+    const company = await prismadb.company.findUnique({
       where: {
-        id: params.categoryId
+        id: params.companyId
       },
     });
   
-    return NextResponse.json(category);
+    return NextResponse.json(company);
   } catch (error) {
-    console.log('[CATEGORY_GET]', error);
+    console.log('[COMPANY_GET]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { categoryId: string, organizationId: string } }
+  { params }: { params: { companyId: string, organizationId: string } }
 ) {
   try {
     const { userId } = auth();
@@ -36,7 +36,7 @@ export async function DELETE(
       return new NextResponse("Unauthenticated", { status: 403 });
     }
 
-    if (!params.categoryId) {
+    if (!params.companyId) {
       return new NextResponse("Category id is required", { status: 400 });
     }
 
@@ -51,15 +51,15 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const category = await prismadb.category.delete({
+    const company = await prismadb.company.delete({
       where: {
-        id: params.categoryId,
+        id: params.companyId,
       }
     });
   
-    return NextResponse.json(category);
+    return NextResponse.json(company);
   } catch (error) {
-    console.log('[CATEGORY_DELETE]', error);
+    console.log('[COMPANY_DELETE]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
@@ -67,7 +67,7 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { categoryId: string, organizationId: string } }
+  { params }: { params: { companyId: string, organizationId: string } }
 ) {
   try {   
     const { userId } = auth();
@@ -84,7 +84,7 @@ export async function PATCH(
       return new NextResponse("Name is required", { status: 400 });
     }
 
-    if (!params.categoryId) {
+    if (!params.companyId) {
       return new NextResponse("Category id is required", { status: 400 });
     }
 
@@ -99,18 +99,18 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 405 });
     }
 
-    const category = await prismadb.category.update({
+    const company = await prismadb.company.update({
       where: {
-        id: params.categoryId,
+        id: params.companyId,
       },
       data: {
         name,
       }
     });
   
-    return NextResponse.json(category);
+    return NextResponse.json(company);
   } catch (error) {
-    console.log('[CATEGORY_PATCH]', error);
+    console.log('[COMPANY_PATCH]', error);
     return new NextResponse("Internal error", { status: 500 });
   }
 };
