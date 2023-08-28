@@ -1,8 +1,6 @@
 import { format } from "date-fns";
-
 import prismadb from "@/lib/prismadb";
-
-import { UserColumn } from "./components/columns"
+import { UserColumn } from "./components/columns";
 import { UsersClient } from "./components/client";
 
 const UsersPage = async ({
@@ -16,6 +14,9 @@ const UsersPage = async ({
     },
     orderBy: {
       createdAt: 'desc'
+    },
+    include: {
+      applications: true // Include related UserApplication data
     }
   });
 
@@ -24,6 +25,10 @@ const UsersPage = async ({
     name: item.name,
     cvUrl: item.cvUrl,
     createdAt: format(item.createdAt, 'MMMM do, yyyy'),
+    applications: item.applications.map(app => ({
+      positionId: app.positionId,
+      status: app.status as any
+    }))
   }));
 
   return (

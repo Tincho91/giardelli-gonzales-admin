@@ -8,10 +8,12 @@ export async function POST(
 ) {
   try {
     const body = await req.json();
-    const { name, email, phoneNumber, cvUrl, clerkId } = body;
+    const { name, email, phoneNumber, cvUrl, clerkId, linkedinUrl } = body; // Included linkedinUrl
 
-    if (!name || !email || !clerkId || !cvUrl) {
-      const missingParams = ['name', 'email', 'clerkId', 'cvUrl'].filter(p => !body[p]);
+    const requiredFields = ['name', 'email', 'phoneNumber', 'clerkId', 'cvUrl']; // Added phoneNumber
+    const missingParams = requiredFields.filter(p => !body[p]);
+
+    if (missingParams.length) {
       return NextResponse.json({ error: `${missingParams.join(', ')} are required` }, { status: 400 });
     }
 
@@ -29,10 +31,11 @@ export async function POST(
       data: {
         name,
         email,
-        phoneNumber: phoneNumber || null,
+        phoneNumber,
         clerkId,
         organizationId: params.organizationId,
         cvUrl,
+        linkedinUrl: linkedinUrl || null, // Added linkedinUrl
       },
     });
 
