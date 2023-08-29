@@ -67,7 +67,7 @@ export const UserForm: React.FC<UserFormProps> = ({
       router.push(`/${params.organizationId}/users`);
       toast.success(toastMessage);
     } catch (error: any) {
-      toast.error('Something went wrong.');
+      toast.error('Something went wrong. ');
     } finally {
       setLoading(false);
     }
