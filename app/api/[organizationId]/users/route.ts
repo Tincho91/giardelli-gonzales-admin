@@ -7,7 +7,12 @@ export async function POST(
   { params }: { params: { organizationId: string } }
 ) {
   try {
+    console.log("Received POST request with params:", params);
+
     const body = await req.json();
+
+    console.log("Received body:", body);
+
     const { name, email, phoneNumber, cvUrl, clerkId, linkedinUrl } = body; // Included linkedinUrl
 
     const requiredFields = ['name', 'email', 'phoneNumber', 'clerkId', 'cvUrl']; // Added phoneNumber
@@ -35,14 +40,17 @@ export async function POST(
         clerkId,
         organizationId: params.organizationId,
         cvUrl,
-        linkedinUrl: linkedinUrl || null, // Added linkedinUrl
+        linkedinUrl: linkedinUrl || null,
       },
     });
+    console.log("Created user:", user);
 
     return NextResponse.json(user);
   } catch (error) {
     console.log('[USERS_POST]', error);
-    return NextResponse.json("Internal error", { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
+    
+    return NextResponse.json({ error: "Internal error", details: errorMessage }, { status: 500 });
   }
 };
 
