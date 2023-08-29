@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import prismadb from '@/lib/prismadb';
-import setCorsHeaders from '@/lib/cors';
 
 export async function POST(
   req: Request,
@@ -13,7 +12,7 @@ export async function POST(
 
     console.log("Received body:", body);
 
-    const { name, email, phoneNumber, cvUrl, clerkId, linkedinUrl } = body; // Included linkedinUrl
+    const { name, email, phoneNumber, cvUrl, clerkId, linkedinUrl, applications } = body;
 
     const requiredFields = ['name', 'email', 'phoneNumber', 'clerkId', 'cvUrl']; // Added phoneNumber
     const missingParams = requiredFields.filter(p => !body[p]);
@@ -40,7 +39,8 @@ export async function POST(
         clerkId,
         organizationId: params.organizationId,
         cvUrl,
-        linkedinUrl: linkedinUrl || null,
+        linkedinUrl: linkedinUrl || null, 
+        applications: applications || null,
       },
     });
     console.log("Created user:", user);
@@ -48,9 +48,8 @@ export async function POST(
     return NextResponse.json(user);
   } catch (error) {
     console.log('[USERS_POST]', error);
-    const errorMessage = error instanceof Error ? error.message : "An unknown error occurred";
     
-    return NextResponse.json({ error: "Internal error", details: errorMessage }, { status: 500 });
+    return NextResponse.json({error:  "Internal error"}, { status: 500 });
   }
 };
 
@@ -60,8 +59,8 @@ export async function GET(
 ) {
   try {
     if (!params.organizationId) {
-      const response = new NextResponse("User id is required", { status: 400 });
-      return setCorsHeaders(response);
+      return new NextResponse("User id is required", { status: 400 });
+
     }
 
     const users = await prismadb.user.findMany({
@@ -73,7 +72,6 @@ export async function GET(
     return NextResponse.json(users);
   } catch (error) {
     console.log('[USER_GET]', error);
-    const response = new NextResponse("Internal error", { status: 500 });
-    return setCorsHeaders(response);
+    return new NextResponse("Internal error", { status: 500 });
   }
 }

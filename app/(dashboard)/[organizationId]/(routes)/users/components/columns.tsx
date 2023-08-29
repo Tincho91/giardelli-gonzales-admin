@@ -45,6 +45,9 @@ export const columns: ColumnDef<UserColumn>[] = [
     accessorKey: "applications",
     cell: ({ row }) => {
       const applications = row.original.applications;
+      if (!applications || applications.length === 0) {
+        return "Nada";
+      }
       return (
         <div>
           {applications.map(app => (

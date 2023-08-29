@@ -4,7 +4,7 @@ import { auth } from '@clerk/nextjs';
 import prismadb from '@/lib/prismadb';
 
 export async function POST(
-  req: Request,
+  req: Request, 
   { params }: { params: { organizationId: string } }
 ) {
   try {
