@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs";
 import prismadb from "@/lib/prismadb";
-import setCorsHeaders from '@/lib/cors';  // Import the setCorsHeaders function
 
 export async function GET(
   req: Request,
@@ -10,7 +9,7 @@ export async function GET(
   try {
     if (!params.userId) {
       const response = new NextResponse("User id is required", { status: 400 });
-      return setCorsHeaders(response);
+      return response;
     }
 
     const user = await prismadb.user.findUnique({
@@ -19,18 +18,13 @@ export async function GET(
       },
     });
 
-    const response = new NextResponse(JSON.stringify(user), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
+    const response = new NextResponse(JSON.stringify(user), {status: 200});
     
-    return setCorsHeaders(response);
+    return response;
   } catch (error) {
     console.log('[USER_GET]', error);
     const response = new NextResponse("Internal error", { status: 500 });
-    return setCorsHeaders(response);
+    return response;
   }
 }
 
@@ -42,22 +36,22 @@ export async function DELETE(
     const { userId: currentUserId } = auth();
 
     if (!currentUserId) {
-      return setCorsHeaders(new NextResponse("Unauthenticated", { status: 403 }));
+      return new NextResponse("Unauthenticated", { status: 403 });
     }
 
     if (!params.userId) {
-      return setCorsHeaders(new NextResponse("User id is required", { status: 400 }));
+      return new NextResponse("User id is required", { status: 400 });
     }
 
     const organizationByUserId = await prismadb.organization.findFirst({
       where: {
         id: params.organizationId,
-        userId: currentUserId,
+        userId: currentUserId, 
       }
     });
 
     if (!organizationByUserId) {
-      return setCorsHeaders(new NextResponse("Unauthorized", { status: 405 }));
+      return new NextResponse("Unauthorized", { status: 405 });
     }
 
     const user = await prismadb.user.delete({
@@ -66,10 +60,10 @@ export async function DELETE(
       }
     });
   
-    return setCorsHeaders(NextResponse.json(user));
+    return NextResponse.json(user);
   } catch (error) {
     console.log('[USER_DELETE]', error);
-    return setCorsHeaders(new NextResponse("Internal error", { status: 500 }));
+    return new NextResponse("Internal error", { status: 500 });
   }
 }
 
@@ -79,10 +73,9 @@ export async function PATCH(
 ) {
   try {   
     const body = await req.json();
-    const { name, email, phoneNumber, cvUrl } = body;
 
     if (!params.userId) {
-      return setCorsHeaders(new NextResponse("User id is required", { status: 400 }));
+      return new NextResponse("User id is required", { status: 400 });
     }
 
     const organizationByUserId = await prismadb.organization.findFirst({
@@ -92,24 +85,40 @@ export async function PATCH(
     });
 
     if (!organizationByUserId) {
-      return setCorsHeaders(new NextResponse("Unauthorized", { status: 405 }));
+      return new NextResponse("Unauthorized", { status: 405 });
     }
 
+    const userId = params.userId; // User ID from route
+    const { positionId, ...otherFields } = body;  // Destructure the body
+    
+    let applicationResponse = null;
+
+    // If positionId is present, add a new application
+    if (positionId) {
+      applicationResponse = await prismadb.userApplication.create({
+        data: {
+          userId,  // Using the User's database ID from route
+          positionId,
+          status: 'HOLD' // initial status
+        },
+      });
+    }
+
+    // Update other user fields and updatedAt
     const user = await prismadb.user.update({
-      where: {
-        id: params.userId,
-      },
+      where: { id: userId },
       data: {
-        name,
-        email,
-        phoneNumber,
-        cvUrl,
-      }
+        ...otherFields,
+        updatedAt: new Date()
+      },
     });
-  
-    return setCorsHeaders(NextResponse.json(user));
+    
+    // Respond with the user and potentially the new application
+    return NextResponse.json({ user, application: applicationResponse });
+
   } catch (error) {
     console.log('[USER_PATCH]', error);
-    return setCorsHeaders(new NextResponse("Internal error", { status: 500 }));
+    return new NextResponse("Internal error", { status: 500 });
   }
 }
+

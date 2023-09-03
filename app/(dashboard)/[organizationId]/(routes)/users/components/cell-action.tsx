@@ -34,8 +34,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
       await axios.delete(`/api/${params.organizationId}/users/${data.id}`);
       toast.success('Usuario borrado.');
       router.refresh();
-    } catch (error) {
-      toast.error('Make sure you removed all products using this User first.');
+    } catch (error: any) {
+      console.error('Error details:', error.response);
+      toast.error('Algo salió mal.');
     } finally {
       setOpen(false);
       setLoading(false);

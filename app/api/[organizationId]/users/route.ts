@@ -39,8 +39,8 @@ export async function POST(
         clerkId,
         organizationId: params.organizationId,
         cvUrl,
-        linkedinUrl: linkedinUrl || null, 
-        applications: applications || null,
+        linkedinUrl,
+        applications,
       },
     });
     console.log("Created user:", user);
@@ -67,6 +67,9 @@ export async function GET(
       where: {
         organizationId: params.organizationId
       },
+      include: {
+        applications: true,
+      }
     });
 
     return NextResponse.json(users);

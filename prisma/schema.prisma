@@ -126,7 +126,7 @@ model User {
   linkedinUrl    String?        // Added linkedinUrl
   organizationId String         
   organizations  Organization[] 
-  applications   UserApplication[]  // To check which jobs they applied for
+  applications   UserApplication[] @relation("userToUserApplication")
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 }
@@ -134,7 +134,7 @@ model User {
 model UserApplication {
   id            String   @id @default(uuid())
   userId        String   // Foreign Key to User
-  user          User     @relation(fields: [userId], references: [id])
+  user          User     @relation("userToUserApplication", fields: [userId], references: [id], onDelete: Cascade)
   positionId    String   // Foreign Key to Position
   position      Position @relation(fields: [positionId], references: [id])
   status        ApplicationStatus @default(HOLD) // Status of the application: APPROVED, DISAPPROVED, or HOLD
