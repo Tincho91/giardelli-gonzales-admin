@@ -20,8 +20,6 @@ const UsersPage = async ({
     }
   });
 
-  console.log(users);
-
   const formattedUsers: UserColumn[] = users.map((item) => ({
     id: item.id,
     name: item.name,
