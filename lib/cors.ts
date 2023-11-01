@@ -1,6 +1,6 @@
 const setCorsHeaders = (res: Response) => {
   // Replace the following with the origin(s) you want to allow
-  const ALLOWED_ORIGINS = ['http://localhost:3001'];
+  const ALLOWED_ORIGINS = ['http://localhost:3000'];
 
   const origin = res.headers.get('Origin');
 
