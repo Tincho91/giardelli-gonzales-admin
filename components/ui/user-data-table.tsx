@@ -30,6 +30,10 @@ interface UserDataTableProps<TData, TValue> {
   searchKey: string;
 }
 
+interface AreaOfInterest {
+  name: string;
+}
+
 export function UserDataTable<TData, TValue>({
   columns,
   data,
@@ -48,7 +52,7 @@ export function UserDataTable<TData, TValue>({
     }
   });
 
-  const [areasOfInterest, setAreasOfInterest] = useState([]);
+  const [areasOfInterest, setAreasOfInterest] = useState<AreaOfInterest[]>([]);
 
   useEffect(() => {
     // Supongo que tienes acceso al organizationId de alguna manera

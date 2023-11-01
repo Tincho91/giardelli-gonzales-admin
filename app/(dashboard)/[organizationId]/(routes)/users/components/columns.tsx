@@ -16,13 +16,12 @@ export type UserColumn = {
   createdAt: string;
   cvUrl: string;
   areaOfInterest: string | null; // Updated
-  keywords: string[]; // New field
+  keywords: string[];
   applications: {
     positionId: string;
     status: ApplicationStatus;
   }[];
 };
-
 
 
 export const columns: ColumnDef<UserColumn>[] = [
@@ -72,14 +71,10 @@ export const columns: ColumnDef<UserColumn>[] = [
     accessorKey: "keywords",
     cell: ({ row }) => {
       const keywords = row.original.keywords;
-      if (!keywords) {
+      if (!keywords || keywords.length === 0) {
         return "N/A";
       }
-      if (typeof keywords === 'string') {
-        const keywordArray = keywords.split(",");
-        return keywordArray.join(", ");
-      }
-      return "N/A";
+      return keywords.join(", ");
     },
     header: "Palabras clave",
   },
