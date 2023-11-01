@@ -15,11 +15,15 @@ export type UserColumn = {
   name: string;
   createdAt: string;
   cvUrl: string;
+  areaOfInterest: string | null; // Updated
+  keywords: string[]; // New field
   applications: {
     positionId: string;
     status: ApplicationStatus;
   }[];
 };
+
+
 
 export const columns: ColumnDef<UserColumn>[] = [
   {
@@ -35,7 +39,7 @@ export const columns: ColumnDef<UserColumn>[] = [
         rel="noopener noreferrer"
         title="View CV"
       >
-        <p>ver cv</p>
+        <p>Ver CV</p>
         <Clipboard />
       </a>
     ) : null,
@@ -46,7 +50,7 @@ export const columns: ColumnDef<UserColumn>[] = [
     cell: ({ row }) => {
       const applications = row.original.applications;
       if (!applications || applications.length === 0) {
-        return "Nada";
+        return "N/A";
       }
       return (
         <div>
@@ -58,7 +62,26 @@ export const columns: ColumnDef<UserColumn>[] = [
         </div>
       );
     },
-    header: "Applications",
+    header: "Applicaciones",
+  },
+  {
+    accessorKey: "areaOfInterest",
+    header: "Área de Interés",
+  },
+  {
+    accessorKey: "keywords",
+    cell: ({ row }) => {
+      const keywords = row.original.keywords;
+      if (!keywords) {
+        return "N/A";
+      }
+      if (typeof keywords === 'string') {
+        const keywordArray = keywords.split(",");
+        return keywordArray.join(", ");
+      }
+      return "N/A";
+    },
+    header: "Palabras clave",
   },
   {
     id: "actions",

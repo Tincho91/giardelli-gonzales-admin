@@ -12,9 +12,9 @@ export async function POST(
 
     console.log("Received body:", body);
 
-    const { name, email, phoneNumber, cvUrl, clerkId, linkedinUrl, applications } = body;
-
-    const requiredFields = ['name', 'email', 'phoneNumber', 'clerkId', 'cvUrl']; // Added phoneNumber
+    const { name, email, phoneNumber, cvUrl, clerkId, linkedinUrl, applications, areaOfInterestId } = body;
+    const requiredFields = ['name', 'email', 'phoneNumber', 'clerkId', 'cvUrl', 'areaOfInterestId'];
+    
     const missingParams = requiredFields.filter(p => !body[p]);
 
     if (missingParams.length) {
@@ -41,6 +41,7 @@ export async function POST(
         cvUrl,
         linkedinUrl,
         applications,
+        areaOfInterestId,
       },
     });
     console.log("Created user:", user);

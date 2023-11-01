@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { useState } from "react";
-import { Copy, MoreHorizontal, Trash } from "lucide-react";
+import { Copy, MoreHorizontal, Trash, Edit } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 
@@ -69,6 +69,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             onClick={() => onCopy(data.id)}
           >
             <Copy className="mr-2 h-4 w-4" /> Copiar ID
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => router.push(`/${params.organizationId}/users/${data.id}`)}
+          >
+            <Edit className="mr-2 h-4 w-4" /> Actualizar
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => setOpen(true)}

@@ -9,18 +9,18 @@ datasource db {
 }
 
 model Organization {
-  id              String          @id @default(uuid())
+  id              String            @id @default(uuid())
   name            String
   userId          String          // Foreign Key to User
-  user            User            @relation(fields: [userId], references: [id])
-  positions       Position[]      @relation("OrganizationToPosition")
-  areasOfInterest AreaOfInterest[] @relation("OrganizationToAreaOfInterest")
-  companies       Company[]       @relation("OrganizationToCompany")
-  availabilities  Availability[]  @relation("OrganizationToAvailability")
-  modalities      Modality[]      @relation("OrganizationToModality")
-  locations       Location[]      @relation("OrganizationToLocation")
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  user            User              @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Added onDelete and onUpdate
+  positions       Position[]        @relation("OrganizationToPosition")
+  areasOfInterest AreaOfInterest[]  @relation("OrganizationToAreaOfInterest")
+  companies       Company[]         @relation("OrganizationToCompany")
+  availabilities  Availability[]    @relation("OrganizationToAvailability")
+  modalities      Modality[]        @relation("OrganizationToModality")
+  locations       Location[]        @relation("OrganizationToLocation")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 
   @@index([userId])
 }
@@ -59,15 +59,15 @@ model Position {
 model AreaOfInterest {
   id             String        @id @default(uuid())
   name           String
-  positions      Position[]   
+  positions      Position[]
+  users          User?         // Opposite relation field added
   organizationId String        // Foreign Key to Organization
-  organization   Organization  @relation("OrganizationToAreaOfInterest", fields: [organizationId], references: [id])
+  organization   Organization  @relation("OrganizationToAreaOfInterest", fields: [organizationId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Added onDelete and onUpdate
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
   @@index([organizationId])
 }
-
 model Company {
   id             String        @id @default(uuid())
   name           String
@@ -117,29 +117,36 @@ model Location {
 }
 
 model User {
-  id             String         @id @default(uuid())
-  clerkId        String         @unique
-  name           String
-  email          String         @unique
-  phoneNumber    String         // Made this required
-  cvUrl          String         
-  linkedinUrl    String?        // Added linkedinUrl
-  organizationId String         
-  organizations  Organization[] 
-  applications   UserApplication[] @relation("userToUserApplication")
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id               String             @id @default(uuid())
+  clerkId          String             @unique
+  name             String
+  email            String             @unique
+  phoneNumber      String         
+  cvUrl            String         
+  linkedinUrl      String?        
+  organizationId   String         
+  keywords         String?
+  organizations    Organization[] 
+  applications     UserApplication[]  @relation("userToUserApplication")
+  areaOfInterestId String?            @unique  
+  areaOfInterest   AreaOfInterest?    @relation(fields: [areaOfInterestId], references: [id])  
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  @@index([areaOfInterestId])
 }
 
+
+
 model UserApplication {
-  id            String   @id @default(uuid())
-  userId        String   // Foreign Key to User
-  user          User     @relation("userToUserApplication", fields: [userId], references: [id], onDelete: Cascade)
-  positionId    String   // Foreign Key to Position
-  position      Position @relation(fields: [positionId], references: [id])
-  status        ApplicationStatus @default(HOLD) // Status of the application: APPROVED, DISAPPROVED, or HOLD
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id            String              @id @default(uuid()) 
+  userId        String   
+  user          User                @relation("userToUserApplication", fields: [userId], references: [id], onDelete: Cascade)
+  positionId    String   
+  position      Position            @relation(fields: [positionId], references: [id])
+  status        ApplicationStatus   @default(HOLD) 
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
   
   @@index([positionId])
   @@index([userId, positionId])

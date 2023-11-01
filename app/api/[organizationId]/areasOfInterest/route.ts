@@ -10,6 +10,8 @@ export async function POST(
   try {
     const { userId } = auth();
 
+    console.log(userId);
+
     const body = await req.json();
 
     const { name } = body;
@@ -72,3 +74,20 @@ export async function GET(
     return new NextResponse("Internal error", { status: 500 });
   }
 };
+
+export async function getAreasOfInterestByOrganizationId(organizationId: string) {
+  try {
+    if (!organizationId) {
+      throw new Error("Organization id is required");
+    }
+
+    return await prismadb.areaOfInterest.findMany({
+      where: {
+        organizationId
+      }
+    });
+  } catch (error) {
+    console.log('[AREASOFINTEREST_GET]', error);
+    throw new Error("Internal error");
+  }
+}

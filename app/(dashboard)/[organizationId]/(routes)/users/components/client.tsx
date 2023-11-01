@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 
-import { DataTable } from "@/components/ui/data-table";
+import { UserDataTable } from "@/components/ui/user-data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 
@@ -22,7 +22,11 @@ export const UsersClient: React.FC<UsersClientProps> = ({ data }) => {
         <Heading title={`Usuarios (${data.length})`} description="Administra las Usuarios" />
       </div>
       <Separator />
-      <DataTable searchKey="name" columns={columns} data={data} />
+      <UserDataTable
+        searchKey="name"
+        columns={columns}
+        data={data}
+      />
       <Heading title="API" description="API Calls for Users" />
       <Separator />
       <ApiList entityName="users" entityIdName="userId" />
