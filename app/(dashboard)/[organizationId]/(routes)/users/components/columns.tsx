@@ -71,10 +71,15 @@ export const columns: ColumnDef<UserColumn>[] = [
     accessorKey: "keywords",
     cell: ({ row }) => {
       const keywords = row.original.keywords;
-      if (!keywords || keywords.length === 0) {
+      if (!keywords) {
         return "N/A";
       }
-      return keywords.join(", ");
+      if (typeof keywords === 'string') {
+        {/*@ts-ignore */}
+        const keywordArray = keywords.split(",");
+        return keywordArray.join(", ");
+      }
+      return "N/A";
     },
     header: "Palabras clave",
   },
