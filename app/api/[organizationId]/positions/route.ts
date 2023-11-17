@@ -95,7 +95,6 @@ export async function GET(
   try {
     const { searchParams } = new URL(req.url)
     const modalityId = searchParams.get('modalityId') || undefined;
-    const technologyId = searchParams.get('technologyId') || undefined;
     const areaOfInterestId = searchParams.get('areaOfInterestId') || undefined;
     const locationId = searchParams.get('locationId') || undefined;
     const availabilityId = searchParams.get('availabilityId') || undefined;
