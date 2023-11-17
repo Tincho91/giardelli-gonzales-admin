@@ -59,7 +59,11 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
     try {
       setLoading(true);
       if (initialData) {
-        await axios.patch(`/api/${params.organizationId}/companies/${params.CompanyId}`, data);
+        await axios.patch(`/api/${params.organizationId}/companies/${params.class name {
+          constructor(parameters) {
+            
+          }
+        }ompanyId}`, data);
       } else {
         await axios.post(`/api/${params.organizationId}/companies`, data);
       }
