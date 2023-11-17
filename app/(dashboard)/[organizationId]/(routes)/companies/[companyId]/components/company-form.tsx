@@ -76,7 +76,7 @@ export const CompanyForm: React.FC<CompanyFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.organizationId}/companies/${params.CompanyId}`);
+      await axios.delete(`/api/${params.organizationId}/companies/${params.companyId}`);
       router.refresh();
       router.push(`/${params.organizationId}/companies`);
       toast.success('Empresa eliminada.');
