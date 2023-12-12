@@ -5,12 +5,14 @@ import { UsersClient } from "./components/client";
 
 import { getAreasOfInterestByOrganizationId } from '../../../../api/[organizationId]/areasOfInterest/route';
 
+
+
 const UsersPage = async ({
   params
 }: {
   params: { organizationId: string }
 }) => {
-  const users = await prismadb.user.findMany({
+  const usersResponse = await prismadb.user.findMany({
     where: {
       organizationId: params.organizationId
     },
@@ -18,14 +20,26 @@ const UsersPage = async ({
       createdAt: 'desc'
     },
     include: {
-      applications: true
+      applications: {
+        include: {
+          position: true
+        }
+      }
     }
   });
 
-  // Obtén todas las áreas de interés
+  const users = usersResponse.map(user => {
+    return {
+      ...user,
+      applications: user.applications.map(app => ({
+        ...app,
+        positionName: app.position?.name || 'N/A'
+      }))
+    };
+  });
+
   const areasOfInterest = await getAreasOfInterestByOrganizationId(params.organizationId);
   
-  // Convierte en un objeto para acceso rápido
   const areasOfInterestMap = Object.fromEntries(
     areasOfInterest.map(area => [area.id, area.name])
   );
@@ -39,7 +53,7 @@ const UsersPage = async ({
     createdAt: format(item.createdAt, 'MMMM do, yyyy'),
     keywords: item.keywords ? item.keywords : [],
     applications: item.applications.map(app => ({
-      positionId: app.positionId,
+      positionName: app.positionName,
       status: app.status as any
     }))
   }));

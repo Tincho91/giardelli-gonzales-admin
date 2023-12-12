@@ -18,7 +18,7 @@ export type UserColumn = {
   areaOfInterest: string | null; // Updated
   keywords: string[];
   applications: {
-    positionId: string;
+    positionName: string;
     status: ApplicationStatus;
   }[];
 };
@@ -54,8 +54,8 @@ export const columns: ColumnDef<UserColumn>[] = [
       return (
         <div>
           {applications.map(app => (
-            <div key={app.positionId}>
-              Position ID: {app.positionId} - Status: {app.status}
+            <div key={app.positionName}>
+              Puesto: {app.positionName} - Estado: {app.status}
             </div>
           ))}
         </div>
