@@ -18,8 +18,8 @@ export type UserColumn = {
   areaOfInterest: string | null; // Updated
   keywords: string[];
   applications: {
-    positionName: string;
-    status: ApplicationStatus;
+  positionName: string;
+  status: ApplicationStatus;
   }[];
 };
 
