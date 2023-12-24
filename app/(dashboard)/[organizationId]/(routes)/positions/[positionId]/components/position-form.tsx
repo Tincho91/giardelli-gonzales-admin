@@ -3,6 +3,11 @@
 import * as z from "zod"
 import axios from "axios"
 import { useState } from "react"
+
+import ReactMarkdown from 'react-markdown';
+import MarkdownEditor from 'react-markdown-editor-lite';
+import 'react-markdown-editor-lite/lib/index.css';
+
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
@@ -51,6 +56,14 @@ interface PositionFormProps {
   modalities: Modality[];
   locations: Location[];
 };
+
+interface CustomEditorProps {
+  value: string;
+  onChange: (data: { text: string; html: string }) => void;
+  // Add any other necessary properties based on your requirements
+}
+
+const dummyRenderHTML = (text: string) => text;
 
 export const PositionForm: React.FC<PositionFormProps> = ({
   initialData,
@@ -168,7 +181,7 @@ export const PositionForm: React.FC<PositionFormProps> = ({
                 <FormItem>
                   <FormLabel>Descripción Corta</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Descripción corta del trabajo" {...field} />
+                    <Textarea disabled={loading} placeholder="Descripción corta del trabajo" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -182,12 +195,17 @@ export const PositionForm: React.FC<PositionFormProps> = ({
                 <FormItem>
                   <FormLabel>Descripción Larga</FormLabel>
                   <FormControl>
-                    <Textarea disabled={loading} placeholder="Descripción larga del trabajo" {...field} />
+                    <MarkdownEditor
+                      value={field.value}
+                      onChange={(data) => form.setValue('longDescription', data.text)}
+                      renderHTML={dummyRenderHTML} 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
 
             <FormField
               control={form.control}

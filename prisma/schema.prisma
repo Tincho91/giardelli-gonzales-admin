@@ -28,7 +28,7 @@ model Organization {
 model Position {
   id                String            @id @default(uuid())
   name              String
-  shortDescription  String
+  shortDescription  String            @db.Text
   longDescription   String            @db.Text
   isArchived        Boolean           @default(false)
   isFeatured        Boolean           @default(false)
