@@ -15,7 +15,7 @@ export type UserColumn = {
   name: string;
   createdAt: string;
   cvUrl: string;
-  areaOfInterest: string | null; // Updated
+  areaOfInterest: string | null;
   keywords: string[];
   applications: {
   positionName: string;

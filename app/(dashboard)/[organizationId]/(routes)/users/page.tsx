@@ -38,6 +38,8 @@ const UsersPage = async ({
     };
   });
 
+  console.log(users)
+
   const areasOfInterest = await getAreasOfInterestByOrganizationId(params.organizationId);
   
   const areasOfInterestMap = Object.fromEntries(
