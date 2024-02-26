@@ -86,7 +86,7 @@ export const PositionForm: React.FC<PositionFormProps> = ({
   const title = initialData ? 'Editar Puesto' : 'Crear Puesto';
   const description = initialData ? 'Editar un Puesto.' : 'Agregar nuevo Puesto';
   const toastMessage = initialData ? 'Puesto actualizado.' : 'Puesto creado.';
-  const action = initialData ? 'Guarder cambios' : 'Crear';
+  const action = initialData ? 'Guardar cambios' : 'Crear';
 
   const defaultValues = initialData ? {
     ...initialData,
