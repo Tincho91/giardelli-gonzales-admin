@@ -198,7 +198,7 @@ export const PositionForm: React.FC<PositionFormProps> = ({
                 <FormItem className="flex flex-col">
                   <FormLabel className="mt-2 mb-1">Descripción Larga</FormLabel>
                   <FormControl>
-                    <Button onClick={() => setIsEditorModalOpen(true)}>Editar Descripción Larga</Button>
+                    <Button type="button" onClick={() => setIsEditorModalOpen(true)}>Editar Descripción Larga</Button>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
