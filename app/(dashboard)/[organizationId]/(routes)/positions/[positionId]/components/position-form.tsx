@@ -4,9 +4,10 @@ import * as z from "zod"
 import axios from "axios"
 import { useState } from "react"
 
-import ReactMarkdown from 'react-markdown';
-import MarkdownEditor from 'react-markdown-editor-lite';
-import 'react-markdown-editor-lite/lib/index.css';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
+import { Modal } from "@/components/ui/modal";
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -79,6 +80,8 @@ export const PositionForm: React.FC<PositionFormProps> = ({
 
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isEditorModalOpen, setIsEditorModalOpen] = useState(false);
+
 
   const title = initialData ? 'Editar Puesto' : 'Crear Puesto';
   const description = initialData ? 'Editar un Puesto.' : 'Agregar nuevo Puesto';
@@ -192,14 +195,10 @@ export const PositionForm: React.FC<PositionFormProps> = ({
               control={form.control}
               name="longDescription"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descripción Larga</FormLabel>
+                <FormItem className="flex flex-col">
+                  <FormLabel className="mt-2 mb-1">Descripción Larga</FormLabel>
                   <FormControl>
-                    <MarkdownEditor
-                      value={field.value}
-                      onChange={(data) => form.setValue('longDescription', data.text)}
-                      renderHTML={dummyRenderHTML} 
-                    />
+                    <Button onClick={() => setIsEditorModalOpen(true)}>Editar Descripción Larga</Button>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -373,6 +372,19 @@ export const PositionForm: React.FC<PositionFormProps> = ({
           </Button>
         </form>
       </Form>
+      <Modal
+        title="Editar Descripción Larga"
+        description="Modifica la descripción larga del puesto."
+        isOpen={isEditorModalOpen}
+        onClose={() => setIsEditorModalOpen(false)}
+      >
+        <ReactQuill
+          theme="snow"
+          value={form.watch('longDescription')}
+          onChange={(content) => form.setValue('longDescription', content)}
+          style={{ height: '70vh', marginBottom: '50px' }} // Ajusta el estilo según necesites
+        />
+      </Modal>
     </>
   );
 };
