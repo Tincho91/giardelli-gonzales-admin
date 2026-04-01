@@ -3,50 +3,50 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
 model Organization {
-  id              String            @id @default(uuid())
+  id              String           @id @default(uuid())
   name            String
-  userId          String          // Foreign Key to User
-  user            User              @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Added onDelete and onUpdate
-  positions       Position[]        @relation("OrganizationToPosition")
-  areasOfInterest AreaOfInterest[]  @relation("OrganizationToAreaOfInterest")
-  companies       Company[]         @relation("OrganizationToCompany")
-  availabilities  Availability[]    @relation("OrganizationToAvailability")
-  modalities      Modality[]        @relation("OrganizationToModality")
-  locations       Location[]        @relation("OrganizationToLocation")
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
+  userId          String // Foreign Key to User
+  user            User             @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Added onDelete and onUpdate
+  positions       Position[]       @relation("OrganizationToPosition")
+  areasOfInterest AreaOfInterest[] @relation("OrganizationToAreaOfInterest")
+  companies       Company[]        @relation("OrganizationToCompany")
+  availabilities  Availability[]   @relation("OrganizationToAvailability")
+  modalities      Modality[]       @relation("OrganizationToModality")
+  locations       Location[]       @relation("OrganizationToLocation")
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
   @@index([userId])
 }
 
 model Position {
-  id                String            @id @default(uuid())
-  name              String
-  shortDescription  String            @db.Text
-  longDescription   String            @db.Text
-  isArchived        Boolean           @default(false)
-  isFeatured        Boolean           @default(false)
-  areaOfInterestId  String            // Foreign Key to AreaOfInterest
-  areaOfInterest    AreaOfInterest    @relation(fields: [areaOfInterestId], references: [id])
-  companyId         String            // Foreign Key to Company
-  company           Company           @relation(fields: [companyId], references: [id])
-  availabilityId    String            // Foreign Key to Availability
-  availability      Availability      @relation(fields: [availabilityId], references: [id])
-  applications      UserApplication[]
-  modalityId        String            // Foreign Key to Modality
-  modality          Modality          @relation(fields: [modalityId], references: [id])
-  locationId        String            // Foreign Key to Location
-  location          Location          @relation(fields: [locationId], references: [id])
-  organizationId    String            // Foreign Key to Organization
-  organization      Organization      @relation("OrganizationToPosition", fields: [organizationId], references: [id])
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  id               String            @id @default(uuid())
+  name             String
+  shortDescription String            @db.Text
+  longDescription  String            @db.Text
+  isArchived       Boolean           @default(false)
+  isFeatured       Boolean           @default(false)
+  areaOfInterestId String // Foreign Key to AreaOfInterest
+  areaOfInterest   AreaOfInterest    @relation(fields: [areaOfInterestId], references: [id])
+  companyId        String // Foreign Key to Company
+  company          Company           @relation(fields: [companyId], references: [id])
+  availabilityId   String // Foreign Key to Availability
+  availability     Availability      @relation(fields: [availabilityId], references: [id])
+  applications     UserApplication[]
+  modalityId       String // Foreign Key to Modality
+  modality         Modality          @relation(fields: [modalityId], references: [id])
+  locationId       String // Foreign Key to Location
+  location         Location          @relation(fields: [locationId], references: [id])
+  organizationId   String // Foreign Key to Organization
+  organization     Organization      @relation("OrganizationToPosition", fields: [organizationId], references: [id])
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 
   @@index([areaOfInterestId])
   @@index([companyId])
@@ -57,97 +57,96 @@ model Position {
 }
 
 model AreaOfInterest {
-  id             String        @id @default(uuid())
+  id             String          @id @default(uuid())
   name           String
   positions      Position[]
-  users          User?         // Opposite relation field added
-  organizationId String        // Foreign Key to Organization
-  organization   Organization  @relation("OrganizationToAreaOfInterest", fields: [organizationId], references: [id], onDelete: NoAction, onUpdate: NoAction) // Added onDelete and onUpdate
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  users          User[]          
+  organizationId String         
+  organization   Organization    @relation("OrganizationToAreaOfInterest", fields: [organizationId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   @@index([organizationId])
 }
+
 model Company {
-  id             String        @id @default(uuid())
+  id             String       @id @default(uuid())
   name           String
-  positions      Position[]   
-  organizationId String        // Foreign Key to Organization
-  organization   Organization  @relation("OrganizationToCompany", fields: [organizationId], references: [id])
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  positions      Position[]
+  organizationId String // Foreign Key to Organization
+  organization   Organization @relation("OrganizationToCompany", fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@index([organizationId])
 }
 
 model Availability {
-  id             String        @id @default(uuid())
+  id             String       @id @default(uuid())
   name           String
-  positions      Position[]   
-  organizationId String        // Foreign Key to Organization
-  organization   Organization  @relation("OrganizationToAvailability", fields: [organizationId], references: [id])
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  positions      Position[]
+  organizationId String // Foreign Key to Organization
+  organization   Organization @relation("OrganizationToAvailability", fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@index([organizationId])
 }
 
 model Modality {
-  id             String        @id @default(uuid())
+  id             String       @id @default(uuid())
   name           String
-  positions      Position[]   
-  organizationId String        // Foreign Key to Organization
-  organization   Organization  @relation("OrganizationToModality", fields: [organizationId], references: [id])
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  positions      Position[]
+  organizationId String // Foreign Key to Organization
+  organization   Organization @relation("OrganizationToModality", fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@index([organizationId])
 }
 
 model Location {
-  id             String        @id @default(uuid())
+  id             String       @id @default(uuid())
   name           String
-  positions      Position[]   
-  organizationId String        // Foreign Key to Organization
-  organization   Organization  @relation("OrganizationToLocation", fields: [organizationId], references: [id])
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  positions      Position[]
+  organizationId String // Foreign Key to Organization
+  organization   Organization @relation("OrganizationToLocation", fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
   @@index([organizationId])
 }
 
 model User {
-  id               String             @id @default(uuid())
-  clerkId          String             @unique
+  id               String            @id @default(uuid())
+  clerkId          String
   name             String
-  email            String             @unique
-  phoneNumber      String         
-  cvUrl            String         
-  linkedinUrl      String?        
-  organizationId   String         
+  email            String            @unique
+  phoneNumber      String
+  cvUrl            String
+  linkedinUrl      String?
+  organizationId   String
   keywords         String?
-  organizations    Organization[] 
-  applications     UserApplication[]  @relation("userToUserApplication")
-  areaOfInterestId String?            @unique  
-  areaOfInterest   AreaOfInterest?    @relation(fields: [areaOfInterestId], references: [id])  
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  organizations    Organization[]
+  applications     UserApplication[] @relation("userToUserApplication")
+  areaOfInterestId String? // @unique removed
+  areaOfInterest   AreaOfInterest?   @relation(fields: [areaOfInterestId], references: [id])
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 
   @@index([areaOfInterestId])
 }
 
-
-
 model UserApplication {
-  id            String              @id @default(uuid()) 
-  userId        String   
-  user          User                @relation("userToUserApplication", fields: [userId], references: [id], onDelete: Cascade)
-  positionId    String   
-  position      Position            @relation(fields: [positionId], references: [id])
-  status        ApplicationStatus   @default(HOLD) 
-  createdAt     DateTime            @default(now())
-  updatedAt     DateTime            @updatedAt
-  
+  id         String            @id @default(uuid())
+  userId     String
+  user       User              @relation("userToUserApplication", fields: [userId], references: [id], onDelete: Cascade)
+  positionId String
+  position   Position          @relation(fields: [positionId], references: [id])
+  status     ApplicationStatus @default(HOLD)
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
   @@index([positionId])
   @@index([userId, positionId])
 }
