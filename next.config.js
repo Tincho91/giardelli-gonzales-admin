@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+const corsAllowOrigin = process.env.CORS_ALLOW_ORIGIN || "*";
+const corsAllowCredentials = corsAllowOrigin === "*" ? "false" : "true";
+
 const nextConfig = {
   images: {
     domains: ["res.cloudinary.com"],
@@ -8,16 +11,16 @@ const nextConfig = {
       {
         source: "/api/:path*",
         headers: [
-          { key: "Access-Control-Allow-Credentials", value: "true" },
-          { key: "Access-Control-Allow-Origin", value: "http://localhost:3001" },
+          { key: "Access-Control-Allow-Credentials", value: corsAllowCredentials },
+          { key: "Access-Control-Allow-Origin", value: corsAllowOrigin },
           {
             key: "Access-Control-Allow-Methods",
-            value: "GET,DELETE,PATCH,POST,PUT",
+            value: "GET,DELETE,PATCH,POST,PUT,OPTIONS",
           },
           {
             key: "Access-Control-Allow-Headers",
             value:
-              "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
+              "Origin, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, Authorization, X-Api-Version",
           },
         ],
       },
